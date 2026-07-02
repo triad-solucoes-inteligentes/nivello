@@ -38,20 +38,12 @@ function SortLink({ workspaceId, params, label, value }) {
       className="inline-flex items-center gap-1 font-medium"
     >
       {label}
-      {isActive ? <span>{params.direction === "asc" ? "↑" : "↓"}</span> : null}
+      {isActive ? <span>{params.direction === "asc" ? "ASC" : "DESC"}</span> : null}
     </Link>
   );
 }
 
-export default function Display({
-  workspaceId,
-  workspaceName,
-  quotes,
-  pagination,
-  search,
-  order,
-  direction,
-}) {
+export default function Display({  workspaceId,  workspaceName,  quotes,  pagination,  search,  order,  direction,}) {
   const params = { search, order, direction };
 
   return (
@@ -168,7 +160,7 @@ export default function Display({
 
         <div className="flex flex-col gap-3 text-sm text-zinc-600 dark:text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            Pagina {pagination.totalPages === 0 ? 0 : pagination.page} de {pagination.totalPages} ·{" "}
+            Pagina {pagination.totalPages === 0 ? 0 : pagination.page} de {pagination.totalPages} -{" "}
             {pagination.totalCount} registros
           </p>
           <div className="flex gap-2">
