@@ -1,0 +1,69 @@
+<!-- @dsCard group="Domain" viewport="700x560" name="Domínio — Cards & Badges" subtitle="Client/Work/Quote cards, tipo & status badges, prazo, timeline, pagamento" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;padding:20px;background:var(--surface-page)}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:0 0 8px}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const NS = window.NivelloDesignSystem_c06109;
+const { ClientCard, WorkCard, QuoteSummaryCard, ProductTypeBadge, QuoteStatusBadge, DeadlineIndicator, TotalPriceDisplay, ProductServiceItem, WorkTimeline, PaymentConditionBlock } = NS;
+function Demo(){
+  return (<div>
+    <div className="row">
+      <ProductTypeBadge type="servico" />
+      <ProductTypeBadge type="material" />
+      <QuoteStatusBadge status="rascunho" />
+      <QuoteStatusBadge status="enviado" />
+      <QuoteStatusBadge status="aprovado" />
+      <QuoteStatusBadge status="recusado" />
+      <QuoteStatusBadge status="expirado" />
+      <DeadlineIndicator daysLeft={2} />
+      <DeadlineIndicator daysLeft={-3} />
+      <DeadlineIndicator daysLeft={18} />
+    </div>
+    <div className="cards">
+      <ClientCard client={{name:"Kalyleste S.A",address:"Monday, Ruta 7 — CDE",cellphone:"0983-693 400"}} worksCount={3} quotesCount={5} onClick={()=>{}} />
+      <WorkCard work={{name:"Poço tubular 100m",address:"Zona rural — CDE",deadline:"2026-04-16"}} clientName="Kalyleste S.A" status="andamento" progress={68} onClick={()=>{}} />
+      <QuoteSummaryCard quote={{number:"002M",clientName:"Kalyleste S.A",workName:"Poço 100m",total:33000000,status:"enviado",date:"13/04/2026",itemCount:9}} onClick={()=>{}} />
+    </div>
+    <div className="two">
+      <div>
+        <h4>Itens (serviço / material)</h4>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          <ProductServiceItem product={{name:"Perfuração em rocha",description:"Diâm. 6 1/8\"",quantity:80,unit:"m",total:18400000,type:"servico"}} />
+          <ProductServiceItem product={{name:"Tubo PVC 174mm",description:"Revestimento",quantity:20,unit:"m",total:3100000,type:"material"}} />
+        </div>
+        <h4 style={{marginTop:16}}>Preço</h4>
+        <div style={{display:"flex",gap:24}}>
+          <TotalPriceDisplay value={33000000} label="Total geral" size="lg" tone="brand" />
+          <TotalPriceDisplay value={6850000} label="Motobomba" size="md" tone="accent" />
+        </div>
+      </div>
+      <div>
+        <h4>Linha do tempo da obra</h4>
+        <WorkTimeline events={[
+          {title:"Orçamento aprovado",date:"13/04",status:"done",icon:"file-check"},
+          {title:"Translado de máquinas",date:"15/04",status:"done",icon:"truck"},
+          {title:"Perfuração em andamento",date:"16/04",status:"current",icon:"drill"},
+          {title:"Instalação de bombeamento",status:"upcoming",icon:"waves"},
+        ]} />
+        <h4 style={{marginTop:16}}>Condições</h4>
+        <PaymentConditionBlock paymentTerms="Saldo 30 e 60 dias" deliveryTerm="3 dias" validity="30 dias" observations="Gestão de documentação na prefeitura inclusa." />
+      </div>
+    </div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+setTimeout(()=>window.lucide && window.lucide.createIcons(), 120);
+</script>
+</body>
+</html>

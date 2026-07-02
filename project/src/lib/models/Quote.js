@@ -2,6 +2,11 @@ import { dbConnect } from "@/lib/handler/db";
 import mongoose from "mongoose";
 
 const QuotesSchema = new mongoose.Schema({
+    workspaceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "workspaces",
+        required: true,
+    },
     name: {
         type: String,
         required: true,
@@ -26,6 +31,8 @@ const QuotesSchema = new mongoose.Schema({
         ref: "clients",
         required: true,
     },
+}, {
+    timestamps: true,
 })
 
 await dbConnect();

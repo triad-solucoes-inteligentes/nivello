@@ -1,12 +1,21 @@
 import Link from "next/link";
+import mongoose from "mongoose";
 
 import { auth } from "@/auth";
 import { SessionStatus } from "@/components/auth/session-status";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { Button } from "@/components/ui/button";
+import { Workspaces } from "@/lib/models/Workspace";
 
 export default async function DashboardPage() {
   const session = await auth();
+
+  const workspace = session?.user?.id
+    ? await Workspaces.findOne({ owner: new mongoose.Types.ObjectId(session.user.id) }).lean()
+    : null;
+
+  const quotesHref = workspace ? `/workspaces/${workspace._id}/quotes` : "#";
+  const newQuoteHref = workspace ? `/workspaces/${workspace._id}/quotes/new` : "#";
 
   return (
     <div className="flex min-h-screen bg-zinc-50 text-black dark:bg-black dark:text-zinc-50">
@@ -24,7 +33,7 @@ export default async function DashboardPage() {
             <span>🏠</span>
             Dashboard
           </Link>
-          <Link href="/orcamentos/novo" className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/5">
+          <Link href={quotesHref} className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/5">
             <span>📄</span>
             Orçamentos
           </Link>
@@ -66,7 +75,7 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button render={<Link href="/orcamentos/novo" />}>Criar Orçamento</Button>
+            <Button render={<Link href={newQuoteHref} />}>Criar Orçamento</Button>
           </div>
         </div>
 
@@ -89,7 +98,7 @@ export default async function DashboardPage() {
             <section className="rounded-3xl border border-black/[.08] bg-white p-8 shadow-sm dark:border-white/[.08] dark:bg-zinc-950">
               <h2 className="text-2xl font-semibold text-black dark:text-zinc-50">Atalhos</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                <Button render={<Link href="/orcamentos/novo" />} className="w-full">Novo Orçamento</Button>
+                <Button render={<Link href={newQuoteHref} />} className="w-full">Novo Orçamento</Button>
                 <Button variant="outline" render={<Link href="#" />} className="w-full">Clientes</Button>
                 <Button variant="outline" render={<Link href="#" />} className="w-full">Obras</Button>
               </div>

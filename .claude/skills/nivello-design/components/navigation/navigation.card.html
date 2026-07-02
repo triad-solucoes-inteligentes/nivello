@@ -1,0 +1,52 @@
+<!-- @dsCard group="Components" viewport="700x460" name="Navigation" subtitle="Tabs, Breadcrumb, Sidebar, BottomNav, Dropdown, Stepper, FilterBar" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;padding:20px;background:var(--surface-page)}.blk{margin-bottom:18px}.frame{border:1px solid var(--border-subtle);border-radius:var(--radius-lg);overflow:hidden;background:var(--surface-card)}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const NS = window.NivelloDesignSystem_c06109;
+const { Tabs, Breadcrumb, Sidebar, BottomNav, DropdownMenu, Stepper, FilterBar, IconButton } = NS;
+function Demo(){
+  const [tab,setTab] = React.useState("servicos");
+  const [nav,setNav] = React.useState("obras");
+  const [mnav,setMnav] = React.useState("orcamentos");
+  const nvItems = [
+    {section:"Geral"},
+    {value:"dashboard",label:"Dashboard",icon:"layout-dashboard"},
+    {value:"clientes",label:"Clientes",icon:"users",badge:43},
+    {value:"obras",label:"Obras",icon:"hard-hat",badge:7},
+    {section:"Comercial"},
+    {value:"produtos",label:"Produtos",icon:"package"},
+    {value:"orcamentos",label:"Orçamentos",icon:"file-text",badge:12},
+  ];
+  return (<div>
+    <div className="blk"><Breadcrumb items={[{label:"Obras",icon:"hard-hat"},{label:"Kalyleste S.A"},{label:"Orçamento 002M"}]} onNavigate={()=>{}} /></div>
+    <div className="blk" style={{display:"flex",gap:20,alignItems:"flex-start"}}>
+      <Tabs value={tab} onChange={setTab} items={[{value:"servicos",label:"Serviços",icon:"wrench",count:6},{value:"materiais",label:"Materiais",icon:"package",count:9},{value:"resumo",label:"Resumo"}]} />
+      <Tabs variant="pill" value={tab} onChange={setTab} items={[{value:"servicos",label:"Serviços"},{value:"materiais",label:"Materiais"},{value:"resumo",label:"Resumo"}]} />
+    </div>
+    <div className="blk"><Stepper current={1} steps={[{label:"Cliente & Obra"},{label:"Itens"},{label:"Resumo"},{label:"Enviar"}]} /></div>
+    <div className="blk"><FilterBar onOpenDrawer={()=>{}} resultCount={18} filters={[{value:"servico",label:"Serviço",icon:"wrench",active:true},{value:"material",label:"Material",icon:"package"},{value:"aprovado",label:"Aprovados"}]} trailing={<DropdownMenu align="right" trigger={<IconButton icon="arrow-up-down" variant="outline" label="Ordenar" />} items={[{label:"Mais recentes",icon:"clock"},{label:"Maior valor",icon:"trending-up"},{divider:true},{label:"Arquivar",icon:"archive",danger:true}]} />} /></div>
+    <div className="blk" style={{display:"grid",gridTemplateColumns:"240px 1fr",gap:16}}>
+      <div className="frame" style={{height:300}}><Sidebar items={nvItems} value={nav} onSelect={setNav} user={{name:"João Perfuratriz",email:"joao@formighieri.com"}} /></div>
+      <div className="frame" style={{height:300,display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
+        <BottomNav value={mnav} onSelect={setMnav} items={[{value:"home",label:"Início",icon:"home"},{value:"clientes",label:"Clientes",icon:"users"},{value:"orcamentos",label:"Orçamentos",icon:"file-text"},{value:"obras",label:"Obras",icon:"hard-hat"},{value:"perfil",label:"Perfil",icon:"user"}]} />
+      </div>
+    </div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+setTimeout(()=>window.lucide && window.lucide.createIcons(), 120);
+</script>
+</body>
+</html>

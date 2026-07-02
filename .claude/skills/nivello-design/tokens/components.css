@@ -1,0 +1,32 @@
+/* ============================================================
+   NIVELLO — shared component keyframes & primitives
+   ============================================================ */
+
+@keyframes nv-spin { to { transform: rotate(360deg); } }
+@keyframes nv-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes nv-slide-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes nv-slide-in-right { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes nv-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+/* Focus ring utility (applied by components on :focus-visible) */
+.nv-focusable:focus-visible { outline: none; box-shadow: var(--focus-ring); border-color: var(--border-brand) !important; }
+
+/* Hover/press micro-interactions for buttons */
+.nv-btn:not(:disabled):active { transform: translateY(0.5px); }
+.nv-btn-primary:not(:disabled):hover { background: var(--brand-hover) !important; }
+.nv-btn-accent:not(:disabled):hover { background: var(--accent-hover) !important; }
+.nv-btn-danger:not(:disabled):hover { background: var(--danger-700) !important; }
+.nv-btn-secondary:not(:disabled):hover { background: var(--surface-hover) !important; border-color: var(--border-strong) !important; }
+.nv-btn-ghost:not(:disabled):hover { background: var(--surface-active) !important; }
+.nv-btn-link:not(:disabled):hover { color: var(--brand-hover) !important; text-decoration: underline; }
+
+/* Cards & rows */
+.nv-card-hover:hover { box-shadow: var(--shadow-md); border-color: var(--border-default); transform: translateY(-1px); }
+.nv-table-row:hover { background: var(--surface-hover) !important; }
+.nv-listitem:hover { background: var(--surface-hover); }
+
+/* Skeleton */
+.nv-skeleton { background: linear-gradient(90deg, var(--neutral-100) 25%, var(--neutral-200) 37%, var(--neutral-100) 63%); background-size: 200% 100%; animation: nv-shimmer 1.4s ease infinite; border-radius: var(--radius-sm); }
+
+/* Lucide sizing default */
+[data-lucide] { display: inline-block; vertical-align: middle; stroke-width: 1.75; }

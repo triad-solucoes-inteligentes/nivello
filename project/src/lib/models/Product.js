@@ -2,6 +2,11 @@ import { dbConnect } from "@/lib/handler/db";
 import mongoose from "mongoose";
 
 const ProductsSchema = new mongoose.Schema({
+    workspaceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "workspaces",
+        required: true,
+    },
     name: {
         type: String,
         required: true,

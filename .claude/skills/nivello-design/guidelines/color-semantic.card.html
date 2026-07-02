@@ -1,0 +1,22 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Semânticas & Domínio" subtitle="Estados + serviço/material + status de orçamento" -->
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8" /><link rel="stylesheet" href="../styles.css" />
+<style>body{margin:0;padding:20px;background:var(--surface-page);font-family:var(--font-sans)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tok{border-radius:10px;padding:10px 12px;border:1px solid}
+.lbl{font-size:12px;font-weight:600}
+.hex{font-size:10px;font-family:var(--font-mono);opacity:.75;margin-top:2px}
+.sec{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:6px 0 0}
+</style></head>
+<body><div class="grid">
+<div class="sec">Estados</div>
+<div class="tok" style="background:var(--success-bg);border-color:var(--success-border);color:var(--success)"><div class="lbl">Sucesso</div><div class="hex">success-600</div></div>
+<div class="tok" style="background:var(--warning-bg);border-color:var(--warning-border);color:var(--warning)"><div class="lbl">Alerta</div><div class="hex">warning-600</div></div>
+<div class="tok" style="background:var(--danger-bg);border-color:var(--danger-border);color:var(--danger)"><div class="lbl">Erro</div><div class="hex">danger-600</div></div>
+<div class="tok" style="background:var(--info-bg);border-color:var(--info-border);color:var(--info)"><div class="lbl">Info</div><div class="hex">info-600</div></div>
+<div class="sec">Domínio</div>
+<div class="tok" style="background:var(--type-service-bg);border-color:var(--type-service-border);color:var(--type-service)"><div class="lbl">Serviço</div><div class="hex">teal</div></div>
+<div class="tok" style="background:var(--type-material-bg);border-color:var(--type-material-border);color:var(--type-material)"><div class="lbl">Material</div><div class="hex">terra</div></div>
+<div class="tok" style="background:var(--status-approved-bg);border-color:transparent;color:var(--status-approved)"><div class="lbl">Aprovado</div><div class="hex">status</div></div>
+<div class="tok" style="background:var(--status-expired-bg);border-color:transparent;color:var(--status-expired)"><div class="lbl">Expirado</div><div class="hex">status</div></div>
+</div></body></html>

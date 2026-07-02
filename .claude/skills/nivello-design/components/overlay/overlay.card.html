@@ -1,0 +1,61 @@
+<!-- @dsCard group="Components" viewport="700x360" name="Overlay" subtitle="Modal & Drawer (confirmação, detalhe, filtros mobile)" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;padding:20px;background:var(--surface-page)}
+/* pin overlays inside the card frame */
+.stage{position:relative;height:320px;border:1px solid var(--border-subtle);border-radius:var(--radius-lg);overflow:hidden;background:var(--neutral-100)}
+.stage [role="dialog"]{}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const NS = window.NivelloDesignSystem_c06109;
+const { Modal, Drawer, Button, Input, Badge } = NS;
+function Demo(){
+  // Render modal + drawer statically open, scoped to a relative stage via portals-free absolute
+  return (
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+      <div className="stage">
+        <div style={{position:"absolute",inset:0,background:"var(--surface-overlay)",display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+          <div role="dialog" style={{width:"100%",maxWidth:360,background:"var(--surface-card)",borderRadius:"var(--radius-xl)",boxShadow:"var(--shadow-xl)",overflow:"hidden"}}>
+            <div style={{display:"flex",gap:12,padding:"18px 18px 0"}}>
+              <span style={{width:40,height:40,borderRadius:"var(--radius-md)",background:"var(--danger-bg)",display:"inline-flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><i data-lucide="trash-2" style={{width:20,height:20,color:"var(--danger)"}}></i></span>
+              <div><div style={{fontSize:17,fontWeight:700,color:"var(--text-strong)"}}>Excluir orçamento?</div><div style={{fontSize:13,color:"var(--text-muted)",marginTop:4}}>O orçamento 002M será removido permanentemente.</div></div>
+            </div>
+            <div style={{display:"flex",justifyContent:"flex-end",gap:10,padding:"16px 18px",marginTop:14,borderTop:"1px solid var(--border-subtle)",background:"var(--surface-page)"}}>
+              <Button variant="ghost" size="sm">Cancelar</Button><Button variant="danger" size="sm" icon="trash-2">Excluir</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="stage">
+        <div style={{position:"absolute",inset:0,background:"var(--surface-overlay)"}}></div>
+        <div role="dialog" style={{position:"absolute",top:0,right:0,bottom:0,width:300,background:"var(--surface-card)",boxShadow:"var(--shadow-xl)",display:"flex",flexDirection:"column"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 18px",borderBottom:"1px solid var(--border-subtle)"}}>
+            <span style={{fontSize:16,fontWeight:700,color:"var(--text-strong)"}}>Detalhe do cliente</span>
+            <i data-lucide="x" style={{width:18,height:18,color:"var(--text-muted)"}}></i>
+          </div>
+          <div style={{padding:18,display:"flex",flexDirection:"column",gap:12}}>
+            <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:15,fontWeight:600}}>Kalyleste S.A</span><Badge tone="success" size="sm">Ativo</Badge></div>
+            <Input label="Telefone" value="0983-693 400" icon="phone" />
+            <Input label="Endereço" value="Monday, Ruta 7 — CDE" icon="map-pin" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+setTimeout(()=>window.lucide && window.lucide.createIcons(), 120);
+</script>
+</body>
+</html>

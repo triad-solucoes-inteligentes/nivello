@@ -1,0 +1,32 @@
+/* ============================================================
+   NIVELLO — FONTS
+   Geist + Geist Mono via Google Fonts. Geist is the typeface
+   already referenced by the Nivello Next.js codebase.
+   NOTE: loaded from Google Fonts CDN for reliability. To
+   self-host, drop the .woff2 files in /assets/fonts and swap
+   these @font-face src URLs.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
+
+/* Base reset applied by the design system */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6, p, figure { margin: 0; }
+
+/* Numeric contexts render tabular for aligned prices/quantities */
+.tabular, table td, table th { font-variant-numeric: tabular-nums; }

@@ -1,0 +1,103 @@
+<!-- @dsCard group="Nivello App" viewport="1440x900" name="Nivello — App (desktop)" subtitle="Dashboard, Clientes, Obras, Orçamentos, builder e impressão" -->
+<!-- @startingPoint section="Nivello App" subtitle="Shell completo do app (sidebar + telas)" viewport="1440x900" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nivello — App</title>
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="data.js"></script>
+<style>
+  html,body{margin:0;height:100%;background:var(--surface-page)}
+  #root{height:100vh}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--neutral-300);border-radius:8px;border:3px solid var(--surface-page)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="screens.jsx" type="text/babel"></script>
+<script src="builder.jsx" type="text/babel"></script>
+<script type="text/babel">
+const NS = window.NivelloDesignSystem_c06109;
+const { Sidebar, IconButton, SearchBar, Avatar, DropdownMenu, Modal, Button, QuotePreview, Toast } = NS;
+const D = window.NivelloData;
+
+function App(){
+  const S = window.NivelloScreens, B = window.NivelloBuilder;
+  const [route, setRoute] = React.useState("dashboard");
+  const [client, setClient] = React.useState(null);
+  const [previewQuote, setPreviewQuote] = React.useState(null);
+  const [toast, setToast] = React.useState(false);
+
+  const go = (r) => { setClient(null); setRoute(r); };
+  const openQuotePreview = () => setPreviewQuote(true);
+
+  let body;
+  if (route === "dashboard") body = <S.Dashboard onNav={go} />;
+  else if (route === "clientes") body = client ? <S.ClientDetail client={client} onBack={()=>setClient(null)} /> : <S.Clientes onOpenClient={setClient} />;
+  else if (route === "obras") body = <S.Obras />;
+  else if (route === "orcamentos") body = <S.Orcamentos onOpenQuote={openQuotePreview} />;
+  else if (route === "novo") body = <B.QuoteBuilder onBack={()=>go("orcamentos")} onGenerate={()=>{ openQuotePreview(); setToast(true); setTimeout(()=>setToast(false),3200); }} />;
+  else if (route === "produtos") body = <S.Produtos />;
+  else body = <div style={{padding:40,color:"var(--text-muted)"}}>Em construção</div>;
+
+  const title = { dashboard:"Dashboard", clientes:"Clientes", obras:"Obras", orcamentos:"Orçamentos", produtos:"Produtos", novo:"Novo orçamento" }[route] || "";
+
+  return (
+    <div style={{display:"flex",height:"100vh",overflow:"hidden"}}>
+      <Sidebar items={D.nav} value={route === "novo" ? "orcamentos" : route} onSelect={go} user={D.user} />
+      <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
+        {/* Topbar */}
+        <header style={{height:"var(--topbar-h)",flexShrink:0,background:"var(--surface-card)",borderBottom:"1px solid var(--border-subtle)",display:"flex",alignItems:"center",gap:16,padding:"0 24px"}}>
+          <div style={{fontSize:15,fontWeight:600,color:"var(--text-strong)"}}>{title}</div>
+          <div style={{maxWidth:340,flex:1,marginLeft:12}}><SearchBar placeholder="Buscar clientes, obras, orçamentos…" /></div>
+          <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:8}}>
+            <IconButton icon="bell" variant="ghost" label="Notificações" />
+            <Button variant="primary" size="sm" icon="plus" onClick={()=>go("novo")}>Novo orçamento</Button>
+            <DropdownMenu align="right" trigger={<span style={{cursor:"pointer"}}><Avatar name={D.user.name} size="sm" /></span>} items={[{label:"Meu perfil",icon:"user"},{label:"Configurações",icon:"settings"},{divider:true},{label:"Sair",icon:"log-out",danger:true}]} />
+          </div>
+        </header>
+        {/* Content */}
+        <main style={{flex:1,overflowY:"auto",padding:"26px 28px"}}>{body}</main>
+      </div>
+
+      {/* Quote print modal */}
+      <Modal open={!!previewQuote} onClose={()=>setPreviewQuote(null)} size="lg" title="Orçamento 002M" description="Pré-visualização para impressão / PDF"
+        footer={<><Button variant="ghost" icon="pencil">Editar</Button><Button variant="secondary" icon="printer">Imprimir</Button><Button variant="primary" icon="download">Baixar PDF</Button></>}>
+        <div style={{background:"var(--neutral-100)",margin:"-18px -22px",padding:20}}>
+          <div style={{background:"#fff",borderRadius:"var(--radius-md)",boxShadow:"var(--shadow-md)"}}>
+            <QuotePreview
+              company={D.company}
+              client={D.clients[0]}
+              work={{name:"Poço tubular para 100 metros", address:"Zona rural — CDE"}}
+              quoteNumber="002M" date="13/04/2026" validity="30 dias"
+              items={D.quoteItems}
+              paymentTerms="Saldo 30 e 60 dias" deliveryTerm="3 dias"
+              observations="Gestão de documentação na Municipalidade de CDE inclusa no orçamento." />
+          </div>
+        </div>
+      </Modal>
+
+      {toast && <div style={{position:"fixed",top:20,right:20,zIndex:1100}}><Toast variant="success" title="Orçamento gerado com sucesso" description="Nº 002M pronto para envio." onClose={()=>setToast(false)} /></div>}
+    </div>
+  );
+}
+
+function ProdutosFallback(){ return <div style={{padding:40,color:"var(--text-muted)"}}>Catálogo de produtos</div>; }
+
+function boot(){
+  if (window.NivelloScreens && window.NivelloBuilder && window.NivelloDesignSystem_c06109 && window.NivelloDesignSystem_c06109.Button) {
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  } else { setTimeout(boot, 30); }
+}
+boot();
+</script>
+</body>
+</html>

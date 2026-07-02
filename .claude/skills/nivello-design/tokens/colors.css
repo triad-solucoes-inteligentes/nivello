@@ -1,0 +1,165 @@
+/* ============================================================
+   NIVELLO — COLOR TOKENS
+   Concept: água subterrânea (aquífero) · solo/perfuração (terra)
+   · engenharia/aço (neutros). Precisão, profundidade, confiança.
+   ============================================================ */
+
+:root {
+  /* ---- Primary · Aquífero (teal/água) ---------------------- */
+  --teal-50:  #EDFBFC;
+  --teal-100: #D1F4F8;
+  --teal-200: #A6E9EF;
+  --teal-300: #6FD6E2;
+  --teal-400: #34BACD;
+  --teal-500: #159AB0;
+  --teal-600: #0C7C93;   /* brand base */
+  --teal-700: #0E6376;
+  --teal-800: #124F5E;
+  --teal-900: #14424E;
+  --teal-950: #082830;
+
+  /* ---- Accent · Terra (solo/perfuração, ocre) -------------- */
+  --terra-50:  #FDF6EC;
+  --terra-100: #F9E7C9;
+  --terra-200: #F2CE8F;
+  --terra-300: #EAB258;
+  --terra-400: #E09632;
+  --terra-500: #C97A22;  /* accent base */
+  --terra-600: #A85F1B;
+  --terra-700: #874819;
+  --terra-800: #6E3B1A;
+  --terra-900: #5C3319;
+
+  /* ---- Neutral · Aço (slate frio, engenharia) -------------- */
+  --neutral-0:   #FFFFFF;
+  --neutral-50:  #F6F8FA;
+  --neutral-100: #EDF1F4;
+  --neutral-200: #DDE3E9;
+  --neutral-300: #C3CDD6;
+  --neutral-400: #97A5B2;
+  --neutral-500: #6B7B8A;
+  --neutral-600: #506170;
+  --neutral-700: #3C4A57;
+  --neutral-800: #2A353F;
+  --neutral-900: #1B242C;
+  --neutral-950: #10171C;
+
+  /* ---- Semantic scales ------------------------------------- */
+  --success-50:  #E9F8EF;
+  --success-100: #C9EED8;
+  --success-500: #12A150;
+  --success-600: #0E8043;
+  --success-700: #0C6637;
+
+  --warning-50:  #FDF4E3;
+  --warning-100: #FAE7BF;
+  --warning-500: #E08C0B;
+  --warning-600: #B96F07;
+  --warning-700: #935806;
+
+  --danger-50:   #FDECEC;
+  --danger-100:  #F9D3D4;
+  --danger-500:  #E5484D;
+  --danger-600:  #C93B40;
+  --danger-700:  #A62F33;
+
+  --info-50:  #EAF2FC;
+  --info-100: #CFE1F8;
+  --info-500: #2E7DD1;
+  --info-600: #2364AC;
+  --info-700: #1C5089;
+
+  /* ============================================================
+     SEMANTIC ALIASES — use these in product, not raw scales
+     ============================================================ */
+
+  /* Brand */
+  --brand:            var(--teal-600);
+  --brand-hover:      var(--teal-700);
+  --brand-active:     var(--teal-800);
+  --brand-subtle:     var(--teal-50);
+  --brand-subtle-hover: var(--teal-100);
+  --brand-border:     var(--teal-200);
+  --brand-contrast:   #FFFFFF;
+
+  --accent:           var(--terra-500);
+  --accent-hover:     var(--terra-600);
+  --accent-subtle:    var(--terra-50);
+  --accent-border:    var(--terra-200);
+  --accent-contrast:  #FFFFFF;
+
+  /* Text */
+  --text-strong:   var(--neutral-900);
+  --text-body:     var(--neutral-700);
+  --text-muted:    var(--neutral-500);
+  --text-subtle:   var(--neutral-400);
+  --text-inverse:  var(--neutral-0);
+  --text-brand:    var(--teal-700);
+  --text-link:     var(--teal-600);
+
+  /* Surfaces */
+  --surface-page:      var(--neutral-50);
+  --surface-card:      var(--neutral-0);
+  --surface-raised:    var(--neutral-0);
+  --surface-sunken:    var(--neutral-100);
+  --surface-hover:     var(--neutral-50);
+  --surface-active:    var(--neutral-100);
+  --surface-inverse:   var(--neutral-900);
+  --surface-deep:      var(--teal-950);   /* sidebar / print header band */
+  --surface-overlay:   rgba(16, 23, 28, 0.55);
+
+  /* Borders */
+  --border-subtle:  var(--neutral-200);
+  --border-default: var(--neutral-300);
+  --border-strong:  var(--neutral-400);
+  --border-brand:   var(--teal-600);
+
+  /* Feedback (text/bg/border triplets) */
+  --success:        var(--success-600);
+  --success-bg:     var(--success-50);
+  --success-border: var(--success-100);
+  --warning:        var(--warning-600);
+  --warning-bg:     var(--warning-50);
+  --warning-border: var(--warning-100);
+  --danger:         var(--danger-600);
+  --danger-bg:      var(--danger-50);
+  --danger-border:  var(--danger-100);
+  --info:           var(--info-600);
+  --info-bg:        var(--info-50);
+  --info-border:    var(--info-100);
+
+  /* Focus */
+  --focus-ring:      0 0 0 3px rgba(12, 124, 147, 0.30);
+  --focus-ring-danger: 0 0 0 3px rgba(229, 72, 77, 0.28);
+
+  /* ---- Domain semantics ------------------------------------ */
+  /* Serviço vs Material */
+  --type-service:        var(--teal-700);
+  --type-service-bg:     var(--teal-50);
+  --type-service-border: var(--teal-200);
+  --type-material:        var(--terra-600);
+  --type-material-bg:     var(--terra-50);
+  --type-material-border: var(--terra-200);
+
+  /* Quote status */
+  --status-draft:     var(--neutral-500);
+  --status-draft-bg:  var(--neutral-100);
+  --status-sent:      var(--info-600);
+  --status-sent-bg:   var(--info-50);
+  --status-approved:    var(--success-600);
+  --status-approved-bg: var(--success-50);
+  --status-rejected:    var(--danger-600);
+  --status-rejected-bg: var(--danger-50);
+  --status-expired:     var(--warning-600);
+  --status-expired-bg:  var(--warning-50);
+
+  /* Work status */
+  --work-planned:     var(--neutral-600);
+  --work-planned-bg:  var(--neutral-100);
+  --work-active:      var(--teal-600);
+  --work-active-bg:   var(--teal-50);
+  --work-done:        var(--success-600);
+  --work-done-bg:     var(--success-50);
+  --work-late:        var(--danger-600);
+  --work-late-bg:     var(--danger-50);
+}

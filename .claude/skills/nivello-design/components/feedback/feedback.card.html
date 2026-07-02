@@ -1,0 +1,58 @@
+<!-- @dsCard group="Components" viewport="700x340" name="Feedback" subtitle="Badge, Alert, Toast, EmptyState, Progress, Skeleton" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;padding:20px;background:var(--surface-page)}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Badge, Alert, Toast, EmptyState, ProgressIndicator, Skeleton, Button } = window.NivelloDesignSystem_c06109;
+function Demo(){
+  return (<div>
+    <div className="row">
+      <Badge tone="brand" dot>Em andamento</Badge>
+      <Badge tone="success" icon="check">Aprovado</Badge>
+      <Badge tone="accent">Material</Badge>
+      <Badge tone="warning">Expirado</Badge>
+      <Badge tone="danger" dot>Atrasada</Badge>
+      <Badge tone="info">Enviado</Badge>
+      <Badge tone="solid">12</Badge>
+      <Badge tone="neutral">Rascunho</Badge>
+    </div>
+    <div className="two" style={{marginBottom:16}}>
+      <Alert variant="success" title="Orçamento gerado" onClose={()=>{}}>O PDF do orçamento nº 002M foi criado com sucesso.</Alert>
+      <Alert variant="warning" title="Prazo próximo">A obra Kalyleste vence em 3 dias.</Alert>
+      <Alert variant="danger" title="Sem conexão">Salvamento automático pausado. Reconectando…</Alert>
+      <Toast variant="success" title="Salvo automaticamente" description="Há 2 segundos" onClose={()=>{}} />
+    </div>
+    <div className="two">
+      <div style={{background:"var(--surface-card)",border:"1px solid var(--border-subtle)",borderRadius:"var(--radius-lg)"}}>
+        <EmptyState compact icon="file-plus-2" title="Nenhum orçamento ainda" description="Crie o primeiro orçamento desta obra." action={<Button size="sm" icon="plus">Novo orçamento</Button>} />
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:16,padding:"4px 0"}}>
+        <ProgressIndicator value={68} showLabel label="Perfuração — Kalyleste" />
+        <ProgressIndicator value={40} tone="accent" showLabel label="Instalação de revestimento" />
+        <div style={{display:"flex",gap:20,alignItems:"center"}}>
+          <ProgressIndicator variant="circular" value={82} />
+          <ProgressIndicator variant="circular" value={35} tone="warning" size="sm" />
+          <div style={{flex:1,display:"flex",flexDirection:"column",gap:8}}>
+            <Skeleton width="70%" /><Skeleton width="90%" /><Skeleton width="50%" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+setTimeout(()=>window.lucide && window.lucide.createIcons(), 100);
+</script>
+</body>
+</html>
