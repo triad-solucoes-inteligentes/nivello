@@ -2,7 +2,9 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, FileText, Search } from "lucide-react";
 
 import { Sidebar } from "@/components/dashboard/Sidebar";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { cn } from "@/lib/utils";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -14,11 +16,6 @@ const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
   month: "2-digit",
   year: "numeric",
 });
-
-const FILTERS = [
-  { value: "all", label: "Todos" },
-  { value: "month", label: "Este mês" },
-];
 
 function buildHref(workspaceId, params, overrides = {}) {
   const query = new URLSearchParams();
@@ -44,17 +41,24 @@ export default function Display({
   order,
   direction,
   filter,
+  locale = "pt",
 }) {
+  const t = getDictionary(locale).quotes;
   const params = { search, order, direction, filter };
+
+  const FILTERS = [
+    { value: "all", label: t.filters.all },
+    { value: "month", label: t.filters.month },
+  ];
 
   return (
     <div className="flex min-h-screen bg-[var(--surface-page)]">
-      <Sidebar workspaceId={workspaceId} workspaceName={workspaceName} userName={userName} active="quotes" />
+      <Sidebar workspaceId={workspaceId} workspaceName={workspaceName} userName={userName} active="quotes" locale={locale} />
 
       <main className="flex-1 px-6 py-8 lg:px-10">
         {/* Header */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-[28px] font-bold tracking-[-0.015em] text-[var(--text-strong)]">Orçamentos</h1>
+          <h1 className="text-[28px] font-bold tracking-[-0.015em] text-[var(--text-strong)]">{t.title}</h1>
           <div className="flex flex-1 items-center gap-3 sm:justify-end">
             <form
               action={`/workspaces/${workspaceId}/quotes`}
@@ -66,7 +70,7 @@ export default function Display({
                   type="search"
                   name="search"
                   defaultValue={search}
-                  placeholder="Buscar orçamento..."
+                  placeholder={t.searchPlaceholder}
                   className="h-10 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-card)] pl-9 pr-3 text-sm text-[var(--text-strong)] outline-none transition placeholder:text-[var(--text-subtle)] focus:border-[var(--teal-500)] focus:ring-2 focus:ring-[var(--teal-500)]/20"
                 />
               </div>
@@ -74,9 +78,9 @@ export default function Display({
               <input type="hidden" name="direction" value={direction} />
               <input type="hidden" name="filter" value={filter} />
             </form>
-            <Button asChild variant="dark">
-              <Link href={`/workspaces/${workspaceId}/quotes/new`}>+ Novo orçamento</Link>
-            </Button>
+            <Link href={`/workspaces/${workspaceId}/quotes/new`} className={buttonVariants({ variant: "dark" })}>
+              {t.newQuote}
+            </Link>
           </div>
         </div>
 
@@ -101,7 +105,7 @@ export default function Display({
             })}
           </div>
           <p className="text-sm text-[var(--text-muted)]">
-            {pagination.totalCount} {pagination.totalCount === 1 ? "orçamento" : "orçamentos"}
+            {pagination.totalCount} {pagination.totalCount === 1 ? t.countSingular : t.countPlural}
           </p>
         </div>
 
@@ -113,26 +117,26 @@ export default function Display({
                 <FileText className="h-6 w-6 text-[var(--text-subtle)]" strokeWidth={1.75} />
               </div>
               <p className="text-lg font-semibold text-[var(--text-strong)]">
-                Nenhum orçamento por aqui ainda
+                {t.emptyTitle}
               </p>
               <p className="max-w-sm text-sm text-[var(--text-muted)]">
-                Crie o primeiro orçamento deste workspace para começar a acompanhar obras e clientes.
+                {t.emptyDescription}
               </p>
-              <Button asChild className="mt-4" variant="dark">
-                <Link href={`/workspaces/${workspaceId}/quotes/new`}>+ Criar orçamento</Link>
-              </Button>
+              <Link href={`/workspaces/${workspaceId}/quotes/new`} className={buttonVariants({ variant: "dark", className: "mt-4" })}>
+                {t.emptyCta}
+              </Link>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-[var(--border-subtle)] text-xs font-semibold uppercase tracking-[0.06em] text-[var(--text-muted)]">
-                    <th className="px-6 py-4">Orçamento</th>
-                    <th className="px-6 py-4">Cliente</th>
-                    <th className="px-6 py-4">Obra</th>
-                    <th className="px-6 py-4">Itens</th>
-                    <th className="px-6 py-4 text-right">Total</th>
-                    <th className="px-6 py-4">Criado em</th>
+                    <th className="px-6 py-4">{t.table.quote}</th>
+                    <th className="px-6 py-4">{t.table.client}</th>
+                    <th className="px-6 py-4">{t.table.work}</th>
+                    <th className="px-6 py-4">{t.table.items}</th>
+                    <th className="px-6 py-4 text-right">{t.table.total}</th>
+                    <th className="px-6 py-4">{t.table.createdAt}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -170,27 +174,23 @@ export default function Display({
         {pagination.totalPages > 1 ? (
           <div className="mt-6 flex flex-col gap-3 text-sm text-[var(--text-muted)] sm:flex-row sm:items-center sm:justify-between">
             <p>
-              Página {pagination.page} de {pagination.totalPages} — {pagination.totalCount} registros
+              {t.pagination.page} {pagination.page} {t.pagination.of} {pagination.totalPages} — {pagination.totalCount} {t.pagination.records}
             </p>
             <div className="flex gap-2">
-              <Button variant="outline" asChild disabled={!pagination.hasPrevPage}>
-                <Link
-                  href={buildHref(workspaceId, params, { page: Math.max(1, pagination.page - 1) })}
-                  className={!pagination.hasPrevPage ? "pointer-events-none opacity-50" : ""}
-                >
-                  <ChevronLeft className="h-4 w-4" strokeWidth={1.75} />
-                  Anterior
-                </Link>
-              </Button>
-              <Button variant="outline" asChild disabled={!pagination.hasNextPage}>
-                <Link
-                  href={buildHref(workspaceId, params, { page: pagination.page + 1 })}
-                  className={!pagination.hasNextPage ? "pointer-events-none opacity-50" : ""}
-                >
-                  Próxima
-                  <ChevronRight className="h-4 w-4" strokeWidth={1.75} />
-                </Link>
-              </Button>
+              <Link
+                href={buildHref(workspaceId, params, { page: Math.max(1, pagination.page - 1) })}
+                className={cn(buttonVariants({ variant: "outline" }), !pagination.hasPrevPage && "pointer-events-none opacity-50")}
+              >
+                <ChevronLeft className="h-4 w-4" strokeWidth={1.75} />
+                {t.pagination.previous}
+              </Link>
+              <Link
+                href={buildHref(workspaceId, params, { page: pagination.page + 1 })}
+                className={cn(buttonVariants({ variant: "outline" }), !pagination.hasNextPage && "pointer-events-none opacity-50")}
+              >
+                {t.pagination.next}
+                <ChevronRight className="h-4 w-4" strokeWidth={1.75} />
+              </Link>
             </div>
           </div>
         ) : null}

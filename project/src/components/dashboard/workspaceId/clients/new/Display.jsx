@@ -2,7 +2,8 @@ import Link from "next/link";
 import { AlertCircle, UserPlus } from "lucide-react";
 
 import { Sidebar } from "@/components/dashboard/Sidebar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { getDictionary } from "@/lib/i18n/dictionaries";
 
 function Field({ label, name, placeholder, type = "text" }) {
   return (
@@ -19,23 +20,25 @@ function Field({ label, name, placeholder, type = "text" }) {
   );
 }
 
-export default function Display({ workspaceId, workspaceName, userName, createClient, error }) {
+export default function Display({ workspaceId, workspaceName, userName, createClient, error, locale = "pt" }) {
+  const t = getDictionary(locale).clientsNew;
+
   return (
     <div className="flex min-h-screen bg-[var(--surface-page)]">
-      <Sidebar workspaceId={workspaceId} workspaceName={workspaceName} userName={userName} active="clients" />
+      <Sidebar workspaceId={workspaceId} workspaceName={workspaceName} userName={userName} active="clients" locale={locale} />
 
       <main className="flex-1 px-6 py-12 sm:px-10">
         <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
           {/* Header */}
           <div className="flex flex-col gap-3">
             <p className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--text-muted)]">
-              Novo cliente
+              {t.eyebrow}
             </p>
             <h1 className="text-[28px] font-bold tracking-[-0.015em] text-[var(--text-strong)]">
-              Cadastrar cliente
+              {t.title}
             </h1>
             <p className="text-sm text-[var(--text-muted)]">
-              Preencha os dados do cliente para vinculá-lo a obras e orçamentos.
+              {t.subtitle}
             </p>
           </div>
 
@@ -52,19 +55,19 @@ export default function Display({ workspaceId, workspaceName, userName, createCl
               <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-[var(--teal-50)]">
                 <UserPlus className="h-5 w-5 text-[var(--teal-600)]" strokeWidth={1.75} />
               </div>
-              <h2 className="text-lg font-semibold text-[var(--text-strong)]">Dados do cliente</h2>
+              <h2 className="text-lg font-semibold text-[var(--text-strong)]">{t.formTitle}</h2>
             </div>
 
             <form action={createClient} className="flex flex-col gap-5">
-              <Field label="Nome" name="name" placeholder="Ex.: Frigorífico Paraná" />
-              <Field label="Endereço" name="address" placeholder="Ex.: Medianeira — PR" />
-              <Field label="Celular" name="cellphone" placeholder="Ex.: (45) 99876-2210" />
+              <Field label={t.fields.name} name="name" placeholder={t.fields.namePlaceholder} />
+              <Field label={t.fields.address} name="address" placeholder={t.fields.addressPlaceholder} />
+              <Field label={t.fields.cellphone} name="cellphone" placeholder={t.fields.cellphonePlaceholder} />
 
               <div className="mt-2 flex flex-wrap gap-3">
-                <Button type="submit">Salvar cliente</Button>
-                <Button type="button" variant="outline" asChild>
-                  <Link href={`/workspaces/${workspaceId}/clients`}>Cancelar</Link>
-                </Button>
+                <Button type="submit">{t.save}</Button>
+                <Link href={`/workspaces/${workspaceId}/clients`} className={buttonVariants({ variant: "outline" })}>
+                  {t.cancel}
+                </Link>
               </div>
             </form>
           </section>

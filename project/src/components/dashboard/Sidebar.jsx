@@ -2,13 +2,20 @@ import Link from "next/link";
 import { Droplet, FileText, HardHat, LayoutGrid, Users } from "lucide-react";
 
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { setLocale } from "@/lib/i18n/actions";
+import { getDictionary, LOCALES } from "@/lib/i18n/dictionaries";
+import { cn } from "@/lib/utils";
 
-export function Sidebar({ workspaceId, workspaceName, userName, active }) {
+const LANGUAGE_LABELS = { pt: "PT", es: "ES" };
+
+export function Sidebar({ workspaceId, workspaceName, userName, active, locale = "pt" }) {
+  const t = getDictionary(locale);
+
   const navItems = [
-    { key: "painel", href: "/dashboard", label: "Painel", icon: LayoutGrid },
-    { key: "quotes", href: `/workspaces/${workspaceId}/quotes`, label: "Orçamentos", icon: FileText },
-    { key: "works", href: `/workspaces/${workspaceId}/works`, label: "Obras", icon: HardHat },
-    { key: "clients", href: `/workspaces/${workspaceId}/clients`, label: "Clientes", icon: Users },
+    { key: "painel", href: "/dashboard", label: t.sidebar.nav.painel, icon: LayoutGrid },
+    { key: "quotes", href: `/workspaces/${workspaceId}/quotes`, label: t.sidebar.nav.quotes, icon: FileText },
+    { key: "works", href: `/workspaces/${workspaceId}/works`, label: t.sidebar.nav.works, icon: HardHat },
+    { key: "clients", href: `/workspaces/${workspaceId}/clients`, label: t.sidebar.nav.clients, icon: Users },
   ];
 
   const initials = (userName || "?")
@@ -66,8 +73,30 @@ export function Sidebar({ workspaceId, workspaceName, userName, active }) {
             <p className="truncate text-[11px] text-[var(--neutral-400)]">{workspaceName}</p>
           </div>
         </div>
+        <div className="mt-3 flex items-center gap-1 rounded-full bg-[var(--surface-deep-hover)] p-1">
+          {LOCALES.map((code) => (
+            <form key={code} action={setLocale} className="contents">
+              <input type="hidden" name="locale" value={code} />
+              <button
+                type="submit"
+                className={cn(
+                  "flex-1 rounded-full px-3 py-1.5 text-xs font-semibold transition",
+                  locale === code
+                    ? "bg-white text-[var(--neutral-900)]"
+                    : "text-[var(--neutral-400)] hover:text-white"
+                )}
+              >
+                {LANGUAGE_LABELS[code]}
+              </button>
+            </form>
+          ))}
+        </div>
+
         <div className="mt-3">
-          <SignOutButton className="w-full border-[var(--surface-deep-hover)] bg-transparent text-[var(--neutral-300)] hover:bg-[var(--surface-deep-hover)] hover:text-white" />
+          <SignOutButton
+            label={t.sidebar.signOut}
+            className="w-full border-[var(--surface-deep-hover)] bg-transparent text-[var(--neutral-300)] hover:bg-[var(--surface-deep-hover)] hover:text-white"
+          />
         </div>
       </div>
     </aside>

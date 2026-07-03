@@ -1,19 +1,22 @@
 import Link from "next/link";
-import { FileText, HardHat, Plus, UserPlus, Users } from "lucide-react";
+import { ChevronRight, FileText, HardHat, Plus, UserPlus, Users } from "lucide-react";
 
 import { Sidebar } from "@/components/dashboard/Sidebar";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { getDictionary } from "@/lib/i18n/dictionaries";
 
-export default function Display({ workspaceId, workspaceName, userName, metrics }) {
+export default function Display({ workspaceId, workspaceName, userName, metrics, locale = "pt" }) {
+  const t = getDictionary(locale).dashboard;
+
   const quotesHref = `/workspaces/${workspaceId}/quotes`;
   const worksHref = `/workspaces/${workspaceId}/works`;
   const newQuoteHref = `/workspaces/${workspaceId}/quotes/new`;
   const newClientHref = `/workspaces/${workspaceId}/clients/new`;
 
   const metricCards = [
-    { label: "Orçamentos", helper: "Neste mês", value: metrics.quotesThisMonth, icon: FileText, tone: "brand" },
-    { label: "Obras", helper: "Ativas", value: metrics.activeWorks, icon: HardHat, tone: "accent" },
-    { label: "Clientes", helper: "Cadastrados", value: metrics.totalClients, icon: Users, tone: "neutral" },
+    { ...t.metrics.quotes, value: metrics.quotesThisMonth, icon: FileText, tone: "brand" },
+    { ...t.metrics.works, value: metrics.activeWorks, icon: HardHat, tone: "accent" },
+    { ...t.metrics.clients, value: metrics.totalClients, icon: Users, tone: "neutral" },
   ];
 
   const toneClasses = {
@@ -22,30 +25,34 @@ export default function Display({ workspaceId, workspaceName, userName, metrics 
     neutral: "bg-[var(--neutral-100)] text-[var(--neutral-600)]",
   };
 
+  const quickActions = [
+    { ...t.quickActions.newQuote, href: newQuoteHref, icon: Plus, tone: "brand" },
+    { ...t.quickActions.newClient, href: newClientHref, icon: UserPlus, tone: "neutral" },
+    { ...t.quickActions.viewWorks, href: worksHref, icon: HardHat, tone: "accent" },
+  ];
+
   return (
     <div className="flex min-h-screen bg-[var(--surface-page)]">
-      <Sidebar workspaceId={workspaceId} workspaceName={workspaceName} userName={userName} active="painel" />
+      <Sidebar workspaceId={workspaceId} workspaceName={workspaceName} userName={userName} active="painel" locale={locale} />
 
       <main className="flex-1 px-6 py-8 lg:px-10">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.06em] text-[var(--text-muted)]">
-              Painel de controle
+              {t.eyebrow}
             </p>
             <h1 className="mt-2 text-[32px] font-bold tracking-[-0.015em] text-[var(--text-strong)]">
-              Bem-vindo
+              {t.title}
             </h1>
             <p className="mt-2 text-sm text-[var(--text-muted)]">
-              Acompanhe orçamentos, obras e clientes em um só lugar.
+              {t.subtitle}
             </p>
           </div>
-          <Button asChild>
-            <Link href={newQuoteHref}>
-              <Plus className="h-4 w-4" strokeWidth={1.75} />
-              Novo orçamento
-            </Link>
-          </Button>
+          <Link href={newQuoteHref} className={buttonVariants()}>
+            <Plus className="h-4 w-4" strokeWidth={1.75} />
+            {t.newQuote}
+          </Link>
         </div>
 
         {/* Cards */}
@@ -71,26 +78,27 @@ export default function Display({ workspaceId, workspaceName, userName, metrics 
 
         {/* Atalhos */}
         <div className="mt-8">
-          <h2 className="text-lg font-semibold text-[var(--text-strong)]">Ações rápidas</h2>
+          <h2 className="text-lg font-semibold text-[var(--text-strong)]">{t.quickActionsTitle}</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <Button asChild variant="outline" className="w-full justify-start">
-              <Link href={newQuoteHref}>
-                <Plus className="h-4 w-4" strokeWidth={1.75} />
-                Novo orçamento
+            {quickActions.map(({ label, description, href, icon: Icon, tone }) => (
+              <Link
+                key={label}
+                href={href}
+                className="group flex items-center gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-card)] p-4 shadow-[var(--shadow-sm)] transition hover:-translate-y-px hover:shadow-[var(--shadow-md)]"
+              >
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] ${toneClasses[tone]}`}>
+                  <Icon className="h-5 w-5" strokeWidth={1.75} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-[var(--text-strong)]">{label}</p>
+                  <p className="mt-0.5 truncate text-xs text-[var(--text-muted)]">{description}</p>
+                </div>
+                <ChevronRight
+                  className="h-4 w-4 shrink-0 text-[var(--text-subtle)] transition group-hover:translate-x-0.5 group-hover:text-[var(--text-muted)]"
+                  strokeWidth={1.75}
+                />
               </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full justify-start">
-              <Link href={newClientHref}>
-                <UserPlus className="h-4 w-4" strokeWidth={1.75} />
-                Novo cliente
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full justify-start">
-              <Link href={worksHref}>
-                <HardHat className="h-4 w-4" strokeWidth={1.75} />
-                Ver obras
-              </Link>
-            </Button>
+            ))}
           </div>
         </div>
       </main>

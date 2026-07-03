@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import { auth } from "@/auth";
 import Display from "@/components/dashboard/Display";
+import { getLocale } from "@/lib/i18n/locale";
 import { Clients } from "@/lib/models/Client";
 import { Quotes } from "@/lib/models/Quote";
 import { Workspaces } from "@/lib/models/Workspace";
@@ -39,6 +40,8 @@ export default async function DashboardPage() {
     Clients.countDocuments({ workspaceId: workspaceObjectId }),
   ]);
 
+  const locale = await getLocale();
+
   return (
     <Display
       workspaceId={workspaceObjectId.toString()}
@@ -49,6 +52,7 @@ export default async function DashboardPage() {
         activeWorks,
         totalClients,
       }}
+      locale={locale}
     />
   );
 }

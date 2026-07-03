@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import Display from "@/components/dashboard/workspaceId/clients/Display";
+import { getLocale } from "@/lib/i18n/locale";
 import { Clients } from "@/lib/models/Client";
 import { Workspaces } from "@/lib/models/Workspace";
 
@@ -223,6 +224,8 @@ export default async function Page({ searchParams, params }) {
   const facet = aggregationResult[0].data;
   const clients = JSON.parse(JSON.stringify(facet));
 
+  const locale = await getLocale();
+
   return (
     <Display
       workspaceId={workspace._id.toString()}
@@ -240,6 +243,7 @@ export default async function Page({ searchParams, params }) {
       order={order}
       direction={direction}
       filter={filter}
+      locale={locale}
     />
   );
 }

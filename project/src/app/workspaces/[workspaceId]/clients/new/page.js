@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { auth } from "@/auth";
 import Display from "@/components/dashboard/workspaceId/clients/new/Display";
+import { getLocale } from "@/lib/i18n/locale";
 import { Clients } from "@/lib/models/Client";
 import { Workspaces } from "@/lib/models/Workspace";
 
@@ -74,6 +75,7 @@ export default async function NewClientPage({ params, searchParams }) {
   }
 
   const { error } = await searchParams;
+  const locale = await getLocale();
 
   return (
     <Display
@@ -82,6 +84,7 @@ export default async function NewClientPage({ params, searchParams }) {
       userName={session.user.name ?? session.user.email}
       createClient={createClient}
       error={typeof error === "string" ? error : ""}
+      locale={locale}
     />
   );
 }
