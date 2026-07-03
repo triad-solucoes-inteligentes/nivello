@@ -117,6 +117,7 @@ const dictionaries = {
         cellphonePlaceholder: "Ex.: (45) 99876-2210",
       },
       save: "Salvar cliente",
+      saving: "Salvando...",
       cancel: "Cancelar",
     },
     adminUsers: {
@@ -252,6 +253,7 @@ const dictionaries = {
         cellphonePlaceholder: "Ej.: (45) 99876-2210",
       },
       save: "Guardar cliente",
+      saving: "Guardando...",
       cancel: "Cancelar",
     },
     adminUsers: {
