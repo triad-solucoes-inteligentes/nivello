@@ -7,6 +7,7 @@ export const authConfig = {
         Google({
             clientId: process.env.GOOGLE_ID ?? process.env.AUTH_GOOGLE_ID,
             clientSecret: process.env.GOOGLE_SECRET ?? process.env.AUTH_GOOGLE_SECRET,
+            allowDangerousEmailAccountLinking: true,
         }),
     ],
     pages: {
