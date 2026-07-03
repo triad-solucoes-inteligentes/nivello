@@ -2,13 +2,12 @@ import mongoose from "mongoose";
 import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import Display from "@/components/dashboard/workspaceId/overview/Display";
-import { Workspaces } from "@/lib/models/Workspace";
-import { Quotes } from "@/lib/models/Quote";
-import { Works } from "@/lib/models/Work";
+import Display from "@/components/dashboard/Display";
+import { getLocale } from "@/lib/i18n/locale";
 import { Clients } from "@/lib/models/Client";
-
-const RECENT_QUOTES_LIMIT = 5;
+import { Quotes } from "@/lib/models/Quote";
+import { Workspaces } from "@/lib/models/Workspace";
+import { Works } from "@/lib/models/Work";
 
 export default async function Page({ params }) {
   const session = await auth();
@@ -35,73 +34,28 @@ export default async function Page({ params }) {
     notFound();
   }
 
-  const [quoteCount, workCount, clientCount, recentQuotesResult] = await Promise.all([
-    Quotes.countDocuments({ workspaceId: workspaceObjectId }),
-    Works.countDocuments({ workspaceId: workspaceObjectId }),
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const [quotesThisMonth, activeWorks, totalClients] = await Promise.all([
+    Quotes.countDocuments({ workspaceId: workspaceObjectId, createdAt: { $gte: startOfMonth } }),
+    Works.countDocuments({ workspaceId: workspaceObjectId, deadline: { $gte: now } }),
     Clients.countDocuments({ workspaceId: workspaceObjectId }),
-    Quotes.aggregate([
-      { $match: { workspaceId: workspaceObjectId } },
-      { $sort: { createdAt: -1 } },
-      { $limit: RECENT_QUOTES_LIMIT },
-      {
-        $lookup: {
-          from: "clients",
-          localField: "clientId",
-          foreignField: "_id",
-          as: "client",
-        },
-      },
-      { $unwind: { path: "$client", preserveNullAndEmptyArrays: true } },
-      {
-        $lookup: {
-          from: "works",
-          localField: "workId",
-          foreignField: "_id",
-          as: "work",
-        },
-      },
-      { $unwind: { path: "$work", preserveNullAndEmptyArrays: true } },
-      {
-        $lookup: {
-          from: "products",
-          localField: "products",
-          foreignField: "_id",
-          as: "products",
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          name: 1,
-          createdAt: 1,
-          total: { $sum: "$products.total" },
-          "client.name": 1,
-          "work.name": 1,
-        },
-      },
-    ]),
   ]);
 
-  const recentQuotes = JSON.parse(JSON.stringify(recentQuotesResult));
+  const locale = await getLocale();
 
   return (
     <Display
-      workspace={{
-        _id: workspace._id.toString(),
-        name: workspace.name,
-        teamId: workspace.teamId,
-        logo: workspace.logo,
+      workspaceId={workspace._id.toString()}
+      workspaceName={workspace.name}
+      userName={session.user.name ?? session.user.email}
+      metrics={{
+        quotesThisMonth,
+        activeWorks,
+        totalClients,
       }}
-      user={{
-        name: session.user.name ?? session.user.email,
-        role: session.user.role,
-      }}
-      counts={{
-        quotes: quoteCount,
-        works: workCount,
-        clients: clientCount,
-      }}
-      recentQuotes={recentQuotes}
+      locale={locale}
     />
   );
 }

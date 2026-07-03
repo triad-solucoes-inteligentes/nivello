@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import Display from "@/components/dashboard/workspaces/Display";
+import { getLocale } from "@/lib/i18n/locale";
 import { Workspaces } from "@/lib/models/Workspace";
 
 const PAGE_SIZE = parseInt(process.env.NEXT_PUBLIC_PAGE_SIZE, 10) || 20;
@@ -20,7 +21,17 @@ const querySchema = z.object({
     .optional()
     .refine((val) => !val || (/^\d+$/.test(val) && parseInt(val, 10) > 0), {
       message: "Page must be a positive integer string",
-    }),
+    })
+    .refine(
+      (val) => {
+        if (!val) return true;
+        const num = Number(val);
+        return Number.isSafeInteger(num) && num <= Number.MAX_SAFE_INTEGER;
+      },
+      {
+        message: "Page number is too large",
+      }
+    ),
   order: z.enum(ORDER_VALUES).optional().default("createdAt"),
   direction: z.enum(DIRECTION_VALUES).optional().default("desc"),
 });
@@ -46,16 +57,14 @@ export default async function Page({ searchParams }) {
         .filter((term) => term.length > 0)
     : [];
 
+  const searchConditions =
+    searchTerms.length > 0
+      ? searchTerms.map((term) => ({ $or: [{ name: { $regex: term, $options: "i" } }] }))
+      : null;
+
   let matchCondition = { owner: ownerObjectId };
-  if (searchTerms.length > 0) {
-    matchCondition = {
-      $and: [
-        matchCondition,
-        ...searchTerms.map((term) => ({
-          $or: [{ name: { $regex: term, $options: "i" } }],
-        })),
-      ],
-    };
+  if (searchConditions && searchConditions.length > 0) {
+    matchCondition = { $and: [matchCondition, ...searchConditions] };
   }
 
   let currentPage = parseInt(page || "1", 10);
@@ -68,7 +77,8 @@ export default async function Page({ searchParams }) {
     skip = 0;
   }
 
-  const dir = { asc: 1, desc: -1 }[direction];
+  const sortDirections = { asc: 1, desc: -1 };
+  const dir = sortDirections[direction];
   const sortOptions = {
     name: { name: dir },
     createdAt: { createdAt: dir },
@@ -108,9 +118,12 @@ export default async function Page({ searchParams }) {
 
   const workspaces = JSON.parse(JSON.stringify(aggregationResult[0].data));
 
+  const locale = await getLocale();
+
   return (
     <Display
       workspaces={workspaces}
+      userName={session.user.name ?? session.user.email}
       pagination={{
         page: currentPage,
         totalPages,
@@ -121,6 +134,7 @@ export default async function Page({ searchParams }) {
       search={search || ""}
       order={order}
       direction={direction}
+      locale={locale}
     />
   );
 }

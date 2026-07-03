@@ -1,9 +1,16 @@
 import Link from "next/link";
-import { Building2, Plus } from "lucide-react";
+import { Building2, Droplet, Search } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { SignOutButton } from "@/components/auth/sign-out-button";
+import { buttonVariants } from "@/components/ui/button";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { cn } from "@/lib/utils";
 
-const dateFormatter = new Intl.DateTimeFormat("pt-BR");
+const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+});
 
 function buildHref(params, overrides = {}) {
   const query = new URLSearchParams();
@@ -19,144 +26,119 @@ function buildHref(params, overrides = {}) {
   return `/workspaces${queryString ? `?${queryString}` : ""}`;
 }
 
-function toggleDirection(currentOrder, currentDirection, nextOrder) {
-  if (currentOrder !== nextOrder) return "asc";
-  return currentDirection === "asc" ? "desc" : "asc";
-}
-
-function SortLink({ params, label, value }) {
-  const direction = toggleDirection(params.order, params.direction, value);
-  const isActive = params.order === value;
-
-  return (
-    <Link href={buildHref(params, { order: value, direction, page: 1 })} className="inline-flex items-center gap-1 font-medium">
-      {label}
-      {isActive ? <span>{params.direction === "asc" ? "ASC" : "DESC"}</span> : null}
-    </Link>
-  );
-}
-
-export default function Display({ workspaces, pagination, search, order, direction }) {
+export default function Display({ workspaces, userName, pagination, search, order, direction, locale = "pt" }) {
+  const t = getDictionary(locale).workspaces;
   const params = { search, order, direction };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-16 sm:px-10">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="min-h-screen bg-[var(--surface-page)]">
+      <header className="flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--surface-card)] px-6 py-4 lg:px-10">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--teal-500)] to-[var(--terra-500)] text-white">
+            <Droplet className="h-4.5 w-4.5" strokeWidth={1.75} fill="currentColor" fillOpacity={0.25} />
+          </div>
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">Nivello</p>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground">Workspaces</h1>
-            <p className="mt-2 max-w-2xl text-base text-muted-foreground">
-              Escolha um workspace para acompanhar obras, clientes e orçamentos.
-            </p>
+            <p className="text-sm font-bold tracking-[-0.015em] text-[var(--text-strong)]">Nivello</p>
+            <p className="text-[11px] text-[var(--text-muted)]">Obras e orçamentos</p>
           </div>
-          <Button render={<Link href="#" />}>
-            <Plus className="size-4" />
-            Novo workspace
-          </Button>
+        </div>
+        <div className="flex items-center gap-3">
+          <p className="hidden text-sm text-[var(--text-muted)] sm:block">{userName}</p>
+          <SignOutButton />
+        </div>
+      </header>
+
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10 lg:px-10">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-[28px] font-bold tracking-[-0.015em] text-[var(--text-strong)]">{t.title}</h1>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">{t.subtitle}</p>
+          </div>
+          <div className="flex flex-1 items-center gap-3 sm:flex-none sm:justify-end">
+            <form action="/workspaces" className="w-full max-w-xs">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-subtle)]" strokeWidth={1.75} />
+                <input
+                  type="search"
+                  name="search"
+                  defaultValue={search}
+                  placeholder={t.searchPlaceholder}
+                  className="h-10 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-card)] pl-9 pr-3 text-sm text-[var(--text-strong)] outline-none transition placeholder:text-[var(--text-subtle)] focus:border-[var(--teal-500)] focus:ring-2 focus:ring-[var(--teal-500)]/20"
+                />
+              </div>
+              <input type="hidden" name="order" value={order} />
+              <input type="hidden" name="direction" value={direction} />
+            </form>
+            <Link href="#" className={buttonVariants({ variant: "dark" })}>
+              {t.newWorkspace}
+            </Link>
+          </div>
         </div>
 
-        <form
-          action="/workspaces"
-          className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-xs sm:flex-row"
-        >
-          <input
-            type="search"
-            name="search"
-            defaultValue={search}
-            placeholder="Buscar por workspace"
-            className="h-10 flex-1 rounded-lg border border-border bg-transparent px-3 text-sm outline-none transition focus:border-ring"
-          />
-          <input type="hidden" name="order" value={order} />
-          <input type="hidden" name="direction" value={direction} />
-          <Button type="submit">Buscar</Button>
-          {search ? (
-            <Button variant="outline" render={<Link href="/workspaces" />}>
-              Limpar
-            </Button>
-          ) : null}
-        </form>
+        <p className="text-sm text-[var(--text-muted)]">
+          {pagination.totalCount} {pagination.totalCount === 1 ? t.countSingular : t.countPlural}
+        </p>
 
-        <section className="flex flex-col gap-3">
-          <div className="flex gap-4 px-2 text-xs uppercase tracking-wider text-muted-foreground">
-            <SortLink params={params} label="Nome" value="name" />
-            <SortLink params={params} label="Criado em" value="createdAt" />
-          </div>
-
-          {workspaces.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card px-8 py-16 text-center shadow-xs">
-              <Building2 className="mb-2 size-8 text-muted-foreground" />
-              <p className="text-lg font-semibold text-foreground">Nenhum workspace por aqui ainda</p>
-              <p className="max-w-sm text-sm text-muted-foreground">
-                Crie o primeiro workspace para começar a organizar obras e orçamentos.
-              </p>
-              <Button className="mt-4" render={<Link href="#" />}>
-                Criar workspace
-              </Button>
+        {workspaces.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-card)] px-8 py-20 text-center shadow-[var(--shadow-sm)]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--neutral-100)]">
+              <Building2 className="h-6 w-6 text-[var(--text-subtle)]" strokeWidth={1.75} />
             </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {workspaces.map((workspace) => (
-                <Link
-                  key={workspace._id}
-                  href={`/workspaces/${workspace._id}`}
-                  className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-xs transition hover:border-ring hover:shadow-sm"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-                      {workspace.logo ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={workspace.logo} alt="" className="size-full rounded-2xl object-cover" />
-                      ) : (
-                        <Building2 className="size-6" />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-lg font-semibold text-foreground">{workspace.name}</p>
-                      <p className="truncate text-sm text-muted-foreground">Equipe {workspace.teamId}</p>
-                    </div>
+            <p className="text-lg font-semibold text-[var(--text-strong)]">{t.emptyTitle}</p>
+            <p className="max-w-sm text-sm text-[var(--text-muted)]">{t.emptyDescription}</p>
+            <Link href="#" className={buttonVariants({ variant: "dark", className: "mt-2" })}>
+              {t.newWorkspace}
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {workspaces.map((workspace) => (
+              <Link
+                key={workspace._id}
+                href={`/workspaces/${workspace._id}`}
+                className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface-card)] p-6 shadow-[var(--shadow-sm)] transition hover:-translate-y-px hover:shadow-[var(--shadow-md)]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--teal-50)] text-[var(--teal-600)]">
+                    <Building2 className="h-5 w-5" strokeWidth={1.75} />
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Criado em {workspace.createdAt ? dateFormatter.format(new Date(workspace.createdAt)) : "-"}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <div className="flex flex-col gap-3 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            Página {pagination.totalPages === 0 ? 0 : pagination.page} de {pagination.totalPages} -{" "}
-            {pagination.totalCount} registros
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              render={
-                <Link
-                  href={buildHref(params, { page: Math.max(1, pagination.page - 1) })}
-                  aria-disabled={!pagination.hasPrevPage}
-                  className={!pagination.hasPrevPage ? "pointer-events-none opacity-50" : ""}
-                />
-              }
-            >
-              Anterior
-            </Button>
-            <Button
-              variant="outline"
-              render={
-                <Link
-                  href={buildHref(params, { page: pagination.page + 1 })}
-                  aria-disabled={!pagination.hasNextPage}
-                  className={!pagination.hasNextPage ? "pointer-events-none opacity-50" : ""}
-                />
-              }
-            >
-              Próxima
-            </Button>
+                  <div className="min-w-0">
+                    <p className="truncate text-base font-semibold text-[var(--text-strong)]">{workspace.name}</p>
+                    <p className="truncate text-xs text-[var(--text-muted)]">
+                      {t.card.team} {workspace.teamId}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-xs text-[var(--text-subtle)]">
+                  {t.card.createdAt} {workspace.createdAt ? dateFormatter.format(new Date(workspace.createdAt)) : "-"}
+                </p>
+              </Link>
+            ))}
           </div>
-        </div>
+        )}
+
+        {pagination.totalPages > 1 ? (
+          <div className="flex flex-col gap-3 text-sm text-[var(--text-muted)] sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              {t.pagination.page} {pagination.page} {t.pagination.of} {pagination.totalPages} — {pagination.totalCount}{" "}
+              {t.pagination.records}
+            </p>
+            <div className="flex gap-2">
+              <Link
+                href={buildHref(params, { page: Math.max(1, pagination.page - 1) })}
+                className={cn(buttonVariants({ variant: "outline" }), !pagination.hasPrevPage && "pointer-events-none opacity-50")}
+              >
+                {t.pagination.previous}
+              </Link>
+              <Link
+                href={buildHref(params, { page: pagination.page + 1 })}
+                className={cn(buttonVariants({ variant: "outline" }), !pagination.hasNextPage && "pointer-events-none opacity-50")}
+              >
+                {t.pagination.next}
+              </Link>
+            </div>
+          </div>
+        ) : null}
       </main>
     </div>
   );
