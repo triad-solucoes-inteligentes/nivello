@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import Display from "@/components/dashboard/workspaceId/quotes/new/Display";
+import { getLocale } from "@/lib/i18n/locale";
 import { Workspaces } from "@/lib/models/Workspace";
 
 export default async function NewQuotePage({ params }) {
@@ -27,11 +28,14 @@ export default async function NewQuotePage({ params }) {
     notFound();
   }
 
+  const locale = await getLocale();
+
   return (
     <Display
       workspaceId={workspace._id.toString()}
       workspaceName={workspace.name}
       userName={session.user.name ?? session.user.email}
+      locale={locale}
     />
   );
 }

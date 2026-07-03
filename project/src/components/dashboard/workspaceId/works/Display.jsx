@@ -2,7 +2,9 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, HardHat, Search } from "lucide-react";
 
 import { Sidebar } from "@/components/dashboard/Sidebar";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { cn } from "@/lib/utils";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -14,19 +16,6 @@ const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
   month: "2-digit",
   year: "numeric",
 });
-
-const FILTERS = [
-  { value: "all", label: "Todas" },
-  { value: "active", label: "Em andamento" },
-  { value: "late", label: "Atrasadas" },
-  { value: "planned", label: "Planejadas" },
-];
-
-const STATUS_LABEL = {
-  planned: "Planejada",
-  active: "Em andamento",
-  late: "Atrasada",
-};
 
 const STATUS_CLASSES = {
   planned: "bg-[var(--work-planned-bg)] text-[var(--work-planned)]",
@@ -58,17 +47,26 @@ export default function Display({
   order,
   direction,
   filter,
+  locale = "pt",
 }) {
+  const t = getDictionary(locale).works;
   const params = { search, order, direction, filter };
+
+  const FILTERS = [
+    { value: "all", label: t.filters.all },
+    { value: "active", label: t.filters.active },
+    { value: "late", label: t.filters.late },
+    { value: "planned", label: t.filters.planned },
+  ];
 
   return (
     <div className="flex min-h-screen bg-[var(--surface-page)]">
-      <Sidebar workspaceId={workspaceId} workspaceName={workspaceName} userName={userName} active="works" />
+      <Sidebar workspaceId={workspaceId} workspaceName={workspaceName} userName={userName} active="works" locale={locale} />
 
       <main className="flex-1 px-6 py-8 lg:px-10">
         {/* Header */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-[28px] font-bold tracking-[-0.015em] text-[var(--text-strong)]">Obras</h1>
+          <h1 className="text-[28px] font-bold tracking-[-0.015em] text-[var(--text-strong)]">{t.title}</h1>
           <div className="flex flex-1 items-center gap-3 sm:justify-end">
             <form
               action={`/workspaces/${workspaceId}/works`}
@@ -80,7 +78,7 @@ export default function Display({
                   type="search"
                   name="search"
                   defaultValue={search}
-                  placeholder="Buscar obra..."
+                  placeholder={t.searchPlaceholder}
                   className="h-10 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-card)] pl-9 pr-3 text-sm text-[var(--text-strong)] outline-none transition placeholder:text-[var(--text-subtle)] focus:border-[var(--teal-500)] focus:ring-2 focus:ring-[var(--teal-500)]/20"
                 />
               </div>
@@ -88,9 +86,9 @@ export default function Display({
               <input type="hidden" name="direction" value={direction} />
               <input type="hidden" name="filter" value={filter} />
             </form>
-            <Button asChild variant="dark">
-              <Link href="#">+ Nova obra</Link>
-            </Button>
+            <Link href="#" className={buttonVariants({ variant: "dark" })}>
+              {t.newWork}
+            </Link>
           </div>
         </div>
 
@@ -115,7 +113,7 @@ export default function Display({
             })}
           </div>
           <p className="text-sm text-[var(--text-muted)]">
-            {pagination.totalCount} {pagination.totalCount === 1 ? "obra" : "obras"}
+            {pagination.totalCount} {pagination.totalCount === 1 ? t.countSingular : t.countPlural}
           </p>
         </div>
 
@@ -127,10 +125,10 @@ export default function Display({
                 <HardHat className="h-6 w-6 text-[var(--text-subtle)]" strokeWidth={1.75} />
               </div>
               <p className="text-lg font-semibold text-[var(--text-strong)]">
-                Nenhuma obra por aqui ainda
+                {t.emptyTitle}
               </p>
               <p className="max-w-sm text-sm text-[var(--text-muted)]">
-                Obras cadastradas neste workspace vão aparecer aqui.
+                {t.emptyDescription}
               </p>
             </div>
           ) : (
@@ -138,12 +136,12 @@ export default function Display({
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-[var(--border-subtle)] text-xs font-semibold uppercase tracking-[0.06em] text-[var(--text-muted)]">
-                    <th className="px-6 py-4">Obra</th>
-                    <th className="px-6 py-4">Cliente</th>
-                    <th className="px-6 py-4">Local</th>
-                    <th className="px-6 py-4">Prazo</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Valor</th>
+                    <th className="px-6 py-4">{t.table.name}</th>
+                    <th className="px-6 py-4">{t.table.client}</th>
+                    <th className="px-6 py-4">{t.table.location}</th>
+                    <th className="px-6 py-4">{t.table.deadline}</th>
+                    <th className="px-6 py-4">{t.table.status}</th>
+                    <th className="px-6 py-4 text-right">{t.table.value}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -167,7 +165,7 @@ export default function Display({
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_CLASSES[work.status]}`}>
-                          {STATUS_LABEL[work.status] ?? work.status}
+                          {t.status[work.status] ?? work.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right font-mono font-medium tabular-nums text-[var(--text-strong)]">
@@ -184,27 +182,23 @@ export default function Display({
         {pagination.totalPages > 1 ? (
           <div className="mt-6 flex flex-col gap-3 text-sm text-[var(--text-muted)] sm:flex-row sm:items-center sm:justify-between">
             <p>
-              Página {pagination.page} de {pagination.totalPages} — {pagination.totalCount} registros
+              {t.pagination.page} {pagination.page} {t.pagination.of} {pagination.totalPages} — {pagination.totalCount} {t.pagination.records}
             </p>
             <div className="flex gap-2">
-              <Button variant="outline" asChild disabled={!pagination.hasPrevPage}>
-                <Link
-                  href={buildHref(workspaceId, params, { page: Math.max(1, pagination.page - 1) })}
-                  className={!pagination.hasPrevPage ? "pointer-events-none opacity-50" : ""}
-                >
-                  <ChevronLeft className="h-4 w-4" strokeWidth={1.75} />
-                  Anterior
-                </Link>
-              </Button>
-              <Button variant="outline" asChild disabled={!pagination.hasNextPage}>
-                <Link
-                  href={buildHref(workspaceId, params, { page: pagination.page + 1 })}
-                  className={!pagination.hasNextPage ? "pointer-events-none opacity-50" : ""}
-                >
-                  Próxima
-                  <ChevronRight className="h-4 w-4" strokeWidth={1.75} />
-                </Link>
-              </Button>
+              <Link
+                href={buildHref(workspaceId, params, { page: Math.max(1, pagination.page - 1) })}
+                className={cn(buttonVariants({ variant: "outline" }), !pagination.hasPrevPage && "pointer-events-none opacity-50")}
+              >
+                <ChevronLeft className="h-4 w-4" strokeWidth={1.75} />
+                {t.pagination.previous}
+              </Link>
+              <Link
+                href={buildHref(workspaceId, params, { page: pagination.page + 1 })}
+                className={cn(buttonVariants({ variant: "outline" }), !pagination.hasNextPage && "pointer-events-none opacity-50")}
+              >
+                {t.pagination.next}
+                <ChevronRight className="h-4 w-4" strokeWidth={1.75} />
+              </Link>
             </div>
           </div>
         ) : null}
